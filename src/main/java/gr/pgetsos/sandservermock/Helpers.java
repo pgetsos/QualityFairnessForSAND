@@ -15,7 +15,7 @@ public class Helpers {
 		final int BUFFER_SIZE = 1024;
 		byte[] data = new byte[BUFFER_SIZE];
 		long startTime = 0;
-		try (BufferedInputStream in = new BufferedInputStream(new URL("ftp://speedtest:speedtest@ftp.otenet.gr/test10Mb.db").openStream())) {
+		try (BufferedInputStream in = new BufferedInputStream(new URL("ftp://speedtest:speedtest@ftp.otenet.gr/test100Mb.db").openStream())) {
 			int dataRead = 0;
 			startTime = System.nanoTime();
 			while ((dataRead = in.read(data, 0, 1024)) > 0) {
@@ -25,6 +25,6 @@ public class Helpers {
 			logger.error(e.getMessage());
 		}
 		float bytesPerSec = totalDownload / ((System.nanoTime() - startTime) / (float) 1000000000);
-		return bytesPerSec / (1024);
+		return bytesPerSec / (1024) * 8;
 	}
 }

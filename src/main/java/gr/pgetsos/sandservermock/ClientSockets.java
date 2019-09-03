@@ -90,8 +90,7 @@ public class ClientSockets {
 				out = new PrintWriter(clientSocket.getOutputStream(), true);
 				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				String inputLine = "";
-				while (!inputLine.equals("Over")) {
-					inputLine = in.readLine();
+				while ((inputLine = in.readLine()) != null) {
 					if (inputLine.startsWith("IP")) {
 						onIPReceived(inputLine);
 					} else if (inputLine.startsWith("Bandwidth")) {
