@@ -102,6 +102,7 @@ public class ClientSockets {
 					} else if (inputLine.equals("Requesting bandwidth")) {
 						onBandwidthRequest();
 					}
+					logger.debug(inputLine);
 				}
 				in.close();
 				out.close();
@@ -112,7 +113,7 @@ public class ClientSockets {
 		}
 
 		private void onIPReceived (String line) {
-			clientIP = line.split(":")[1].strip();
+			clientIP = line.split(":")[1].trim();
 			if (!parent.getClients().containsKey(clientIP)) {
 				ClientInfo newClient = new ClientInfo();
 				newClient.setIpAddress(clientIP);
@@ -122,19 +123,19 @@ public class ClientSockets {
 		}
 
 		private void onBandwidthReceived (String line) {
-			float bandwidth = Float.parseFloat(line.split(":")[1].strip());
+			float bandwidth = Float.parseFloat(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setLastMeasuredBandwidth(bandwidth);
 			out.println(RECEIVED);
 		}
 
 		private void onLevelReceived (String line) {
-			float level = Float.parseFloat(line.split(":")[1].strip());
+			float level = Float.parseFloat(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setLastLevel(level);
 			out.println(RECEIVED);
 		}
 
 		private void onStallingReceived (String line) {
-			String stallString = line.split(":")[1].strip();
+			String stallString = line.split(":")[1].trim();
 			boolean stalled = stallString.equals("true");
 			parent.getClients().get(clientIP).setStalled(stalled);
 			out.println(RECEIVED);
