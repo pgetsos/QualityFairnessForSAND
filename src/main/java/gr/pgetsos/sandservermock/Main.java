@@ -22,7 +22,10 @@ public class Main {
 		logger.info("Running in {} mode", () -> runningMode);
 
 		ClientSockets sockets = new ClientSockets(kbps, stableMode);
-		sockets.start(3535);
+		if (args[1].equals("fake")) {
+			sockets.setFake(true);
+		}
 
+		sockets.start(3535);
 	}
 }

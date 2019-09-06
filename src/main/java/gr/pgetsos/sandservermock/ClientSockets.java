@@ -18,6 +18,7 @@ public class ClientSockets {
 	private ConcurrentHashMap<String, ClientInfo> clients = new ConcurrentHashMap<>(3);
 	private float calculatedBandwidth;
 	private boolean stableMode;
+	private boolean fake;
 
 	private ServerSocket serverSocket;
 
@@ -70,6 +71,14 @@ public class ClientSockets {
 
 	public void setStableMode(boolean stableMode) {
 		this.stableMode = stableMode;
+	}
+
+	public boolean isFake() {
+		return fake;
+	}
+
+	public void setFake(boolean fake) {
+		this.fake = fake;
 	}
 
 	private static class EchoClientHandler extends Thread {
@@ -142,9 +151,23 @@ public class ClientSockets {
 		}
 
 		private void onBandwidthRequest() {
+			if (parent.isFake()) {
+				switch (clientIP) {
+					case "192.168.1.1":
+						out.println(RECEIVED + 200);
+						break;
+					case "192.168.1.2":
+						out.println(RECEIVED + 600);
+						break;
+					default:
+						out.println(RECEIVED + 1200);
+						break;
+				}
+				return;
+			}
 			if (parent.isStableMode()) {
 				float maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
-				out.println(maxAllowed);
+				out.println(RECEIVED + maxAllowed);
 			} else {
 				recalculateBandwidth();
 			}

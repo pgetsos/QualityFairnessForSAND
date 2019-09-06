@@ -12,13 +12,13 @@ public class Helpers {
 
 	static float caclculateInitialCapacity() {
 		long totalDownload = 0;
-		final int BUFFER_SIZE = 1024;
+		final int BUFFER_SIZE = 8192;
 		byte[] data = new byte[BUFFER_SIZE];
 		long startTime = 0;
 		try (BufferedInputStream in = new BufferedInputStream(new URL("ftp://speedtest:speedtest@ftp.otenet.gr/test100Mb.db").openStream())) {
 			int dataRead = 0;
 			startTime = System.nanoTime();
-			while ((dataRead = in.read(data, 0, 1024)) > 0) {
+			while ((dataRead = in.read(data, 0, 8192)) > 0) {
 				totalDownload += dataRead;
 			}
 		} catch (IOException e) {
