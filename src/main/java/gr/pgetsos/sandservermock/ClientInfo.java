@@ -4,15 +4,17 @@ public class ClientInfo {
 	String ipAddress;
 	float lastMeasuredBandwidth;
 	float lastLevel;
+	float qualityScore;
 	int sharingWith;
 	boolean stalled;
 
 	public ClientInfo() { }
 
-	public ClientInfo(String ipAddress, float lastMeasuredBandwidth, float lastLevel, int sharingWith, boolean stalled) {
+	public ClientInfo(String ipAddress, float lastMeasuredBandwidth, float lastLevel, float qualityScore, int sharingWith, boolean stalled) {
 		this.ipAddress = ipAddress;
 		this.lastMeasuredBandwidth = lastMeasuredBandwidth;
 		this.lastLevel = lastLevel;
+		this.qualityScore = qualityScore;
 		this.sharingWith = sharingWith;
 		this.stalled = stalled;
 	}
@@ -39,6 +41,14 @@ public class ClientInfo {
 
 	public void setLastLevel(float lastLevel) {
 		this.lastLevel = lastLevel;
+	}
+
+	public float getQualityScore() {
+		return qualityScore;
+	}
+
+	public void setQualityScore(float qualityScore) {
+		this.qualityScore = qualityScore;
 	}
 
 	public int getSharingWith() {

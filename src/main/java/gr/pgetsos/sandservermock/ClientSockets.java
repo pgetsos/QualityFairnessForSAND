@@ -108,6 +108,8 @@ public class ClientSockets {
 						onLevelReceived(inputLine);
 					} else if (inputLine.startsWith("Stalling")) {
 						onStallingReceived(inputLine);
+					} else if (inputLine.startsWith("Quality")) {
+						onQualityReceived(inputLine);
 					} else if (inputLine.equals("Requesting bandwidth")) {
 						onBandwidthRequest();
 					}
@@ -140,6 +142,12 @@ public class ClientSockets {
 		private void onLevelReceived (String line) {
 			float level = Float.parseFloat(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setLastLevel(level);
+			out.println(RECEIVED);
+		}
+
+		private void onQualityReceived (String line) {
+			float score = Float.parseFloat(line.split(":")[1].trim());
+			parent.getClients().get(clientIP).setQualityScore(score);
 			out.println(RECEIVED);
 		}
 
