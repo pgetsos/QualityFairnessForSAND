@@ -15,14 +15,14 @@ public class Main {
 
 		float kbps = Helpers.caclculateInitialCapacity();
 
-		boolean stableMode = Boolean.parseBoolean(args[0]);
+		boolean stableMode = args.length <= 0 || Boolean.parseBoolean(args[0]);
 		String runningMode = stableMode ? "STABLE" : "UNSTABLE";
 
 		logger.info("Calculated total initial bandwidth {} kbps", () -> kbps);
 		logger.info("Running in {} mode", () -> runningMode);
 
 		ClientSockets sockets = new ClientSockets(kbps, stableMode);
-		if (args[1].equals("fake")) {
+		if (args.length > 1 && args[1].equals("fake")) {
 			sockets.setFake(true);
 		}
 
