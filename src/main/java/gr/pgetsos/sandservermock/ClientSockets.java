@@ -198,7 +198,7 @@ public class ClientSockets {
 					float maxAllowed = (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
 					out.println(maxAllowed);
 				} else {
-					float maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
+					float maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
 					out.println(maxAllowed * 1.05);
 				}
 			}
