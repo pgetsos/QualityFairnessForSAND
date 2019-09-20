@@ -1,22 +1,28 @@
 package gr.pgetsos.sandservermock;
 
+import java.util.Map;
+
 public class ClientInfo {
 	String ipAddress;
-	float lastMeasuredBandwidth;
-	float lastLevel;
-	float qualityScore;
+	int lastMeasuredBandwidth;
+	int lastLevel;
+	double qualityScore;
+	int minimumBandwidth;
 	int sharingWith;
 	boolean stalled;
+	Map<Integer, Double> qualityList;
 
 	public ClientInfo() { }
 
-	public ClientInfo(String ipAddress, float lastMeasuredBandwidth, float lastLevel, float qualityScore, int sharingWith, boolean stalled) {
+	public ClientInfo(String ipAddress, int lastMeasuredBandwidth, int lastLevel, double qualityScore, int minimumBandwidth, int sharingWith, boolean stalled, Map<Integer, Double> qualityList) {
 		this.ipAddress = ipAddress;
 		this.lastMeasuredBandwidth = lastMeasuredBandwidth;
 		this.lastLevel = lastLevel;
 		this.qualityScore = qualityScore;
+		this.minimumBandwidth = minimumBandwidth;
 		this.sharingWith = sharingWith;
 		this.stalled = stalled;
+		this.qualityList = qualityList;
 	}
 
 	public String getIpAddress() {
@@ -27,28 +33,36 @@ public class ClientInfo {
 		this.ipAddress = ipAddress;
 	}
 
-	public float getLastMeasuredBandwidth() {
+	public int getLastMeasuredBandwidth() {
 		return lastMeasuredBandwidth;
 	}
 
-	public void setLastMeasuredBandwidth(float lastMeasuredBandwidth) {
+	public void setLastMeasuredBandwidth(int lastMeasuredBandwidth) {
 		this.lastMeasuredBandwidth = lastMeasuredBandwidth;
 	}
 
-	public float getLastLevel() {
+	public int getLastLevel() {
 		return lastLevel;
 	}
 
-	public void setLastLevel(float lastLevel) {
+	public void setLastLevel(int lastLevel) {
 		this.lastLevel = lastLevel;
 	}
 
-	public float getQualityScore() {
+	public double getQualityScore() {
 		return qualityScore;
 	}
 
-	public void setQualityScore(float qualityScore) {
+	public void setQualityScore(double qualityScore) {
 		this.qualityScore = qualityScore;
+	}
+
+	public int getMinimumBandwidth() {
+		return minimumBandwidth;
+	}
+
+	public void setMinimumBandwidth(int minimumBandwidth) {
+		this.minimumBandwidth = minimumBandwidth;
 	}
 
 	public int getSharingWith() {
@@ -65,6 +79,14 @@ public class ClientInfo {
 
 	public void setStalled(boolean stalled) {
 		this.stalled = stalled;
+	}
+
+	public Map<Integer, Double> getQualityList() {
+		return qualityList;
+	}
+
+	public void setQualityList(Map<Integer, Double> qualityList) {
+		this.qualityList = qualityList;
 	}
 
 	@Override

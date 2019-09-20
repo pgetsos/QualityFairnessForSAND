@@ -6,42 +6,44 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ClientSockets {
+class ClientSockets {
 	private static final Logger logger = LogManager.getLogger("gr.pgetsos.SANDServerMock.ClientSockets");
 	private static final String RECEIVED = "Received";
 
 	private ConcurrentHashMap<String, ClientInfo> clients = new ConcurrentHashMap<>(3);
-	private float calculatedBandwidth;
+	private int calculatedBandwidth;
 	private boolean stableMode;
-	private boolean fake;
 
 	private ServerSocket serverSocket;
 
-	public ClientSockets(float calculatedBandwidth, boolean stableMode) {
+	ClientSockets(int calculatedBandwidth, boolean stableMode) {
 		this.calculatedBandwidth = calculatedBandwidth;
 		this.stableMode = stableMode;
 	}
 
-	public void start(int port) {
+	void start() {
 		try {
 			logger.debug("Starting socket for incoming connections");
-			serverSocket = new ServerSocket(port);
+			serverSocket = new ServerSocket(3535);
 			//noinspection InfiniteLoopStatement
 			while (true) {
 				new EchoClientHandler(this, serverSocket.accept()).start();
-				logger.debug("New connection!");
 			}
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
 	}
 
-	public void stop() {
+	void stop() {
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
@@ -49,36 +51,28 @@ public class ClientSockets {
 		}
 	}
 
-	public ConcurrentHashMap<String, ClientInfo> getClients() {
+	private ConcurrentHashMap<String, ClientInfo> getClients() {
 		return clients;
 	}
 
-	public void setClients(ConcurrentHashMap<String, ClientInfo> clients) {
+	void setClients(ConcurrentHashMap<String, ClientInfo> clients) {
 		this.clients = clients;
 	}
 
-	public float getCalculatedBandwidth() {
+	private int getCalculatedBandwidth() {
 		return calculatedBandwidth;
 	}
 
-	public void setCalculatedBandwidth(float calculatedBandwidth) {
+	private void setCalculatedBandwidth(int calculatedBandwidth) {
 		this.calculatedBandwidth = calculatedBandwidth;
 	}
 
-	public boolean isStableMode() {
+	private boolean isStableMode() {
 		return stableMode;
 	}
 
-	public void setStableMode(boolean stableMode) {
+	void setStableMode(boolean stableMode) {
 		this.stableMode = stableMode;
-	}
-
-	public boolean isFake() {
-		return fake;
-	}
-
-	public void setFake(boolean fake) {
-		this.fake = fake;
 	}
 
 	private static class EchoClientHandler extends Thread {
@@ -102,6 +96,8 @@ public class ClientSockets {
 				while ((inputLine = in.readLine()) != null) {
 					if (inputLine.startsWith("IP")) {
 						onIPReceived(inputLine);
+					} else if (inputLine.startsWith("QLIST")) {
+						onQualityListReceived(inputLine);
 					} else if (inputLine.startsWith("Bandwidth")) {
 						onBandwidthReceived(inputLine);
 					} else if (inputLine.startsWith("Level")) {
@@ -113,7 +109,6 @@ public class ClientSockets {
 					} else if (inputLine.equals("Requesting bandwidth")) {
 						onBandwidthRequest();
 					}
-					logger.debug(inputLine);
 				}
 				in.close();
 				out.close();
@@ -129,24 +124,38 @@ public class ClientSockets {
 				ClientInfo newClient = new ClientInfo();
 				newClient.setIpAddress(clientIP);
 				parent.getClients().put(clientIP, newClient);
+				logger.info("New registration! "+clientIP);
 			}
 			out.println(RECEIVED);
 		}
 
+		private void onQualityListReceived (String line) {
+			Map<Integer, Double> qualityMap = new HashMap<>();
+			String[] values = line.split(" NEW", 2)[1].split("NEW");
+			parent.clients.get(clientIP).setMinimumBandwidth(Integer.parseInt(values[0].split(":")[0]));
+			for (String value : values) {
+				Integer bitrate = Integer.parseInt(value.split(":")[0]);
+				double quality = Double.parseDouble(value.split(":")[1]);
+				qualityMap.put(bitrate, quality);
+			}
+			parent.getClients().get(clientIP).setQualityList(qualityMap);
+			out.println(RECEIVED);
+		}
+
 		private void onBandwidthReceived (String line) {
-			float bandwidth = Float.parseFloat(line.split(":")[1].trim());
+			int bandwidth = (int) Double.parseDouble(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setLastMeasuredBandwidth(bandwidth);
 			out.println(RECEIVED);
 		}
 
 		private void onLevelReceived (String line) {
-			float level = Float.parseFloat(line.split(":")[1].trim());
+			int level = Integer.parseInt(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setLastLevel(level);
 			out.println(RECEIVED);
 		}
 
 		private void onQualityReceived (String line) {
-			float score = Float.parseFloat(line.split(":")[1].trim());
+			double score = Double.parseDouble(line.split(":")[1].trim());
 			parent.getClients().get(clientIP).setQualityScore(score);
 			out.println(RECEIVED);
 		}
@@ -159,31 +168,18 @@ public class ClientSockets {
 		}
 
 		private void onBandwidthRequest() {
-			if (parent.isFake()) {
-				switch (clientIP) {
-					case "192.168.1.1":
-						out.println(RECEIVED + 200);
-						break;
-					case "192.168.1.2":
-						out.println(RECEIVED + 600);
-						break;
-					default:
-						out.println(RECEIVED + 1200);
-						break;
-				}
-				return;
-			}
 			if (parent.isStableMode()) {
-				float maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
-				out.println(RECEIVED + maxAllowed);
+				double maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
+				int qualityBased = bruteForceQuality();
+				out.println(RECEIVED + qualityBased);
 			} else {
 				recalculateBandwidth();
 			}
 		}
 
 		private void recalculateBandwidth() {
-			float max = parent.getCalculatedBandwidth();
-			float clientMax = 0;
+			int max = parent.getCalculatedBandwidth();
+			int clientMax = 0;
 			ClientInfo client = parent.getClients().get(clientIP);
 			for (ClientInfo clientInfo : parent.getClients().values()) {
 				clientMax += clientInfo.getLastMeasuredBandwidth();
@@ -191,17 +187,80 @@ public class ClientSockets {
 			if (clientMax > max) {
 				max = clientMax;
 				parent.setCalculatedBandwidth(max);
-				float maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
+				double maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
 				out.println(maxAllowed);
 			} else if (clientMax < max) {
 				if (client.getLastLevel() > client.getLastMeasuredBandwidth()) {
-					float maxAllowed = (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
+					double maxAllowed = (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
 					out.println(maxAllowed);
 				} else {
-					float maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
+					double maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
 					out.println(maxAllowed * 1.05);
 				}
 			}
+		}
+
+		private int bruteForceQuality() {
+			double minimumBandwidth = 0;
+			int maximumBandwidth = parent.getCalculatedBandwidth();
+			List<Map<Integer, Double>> lists = new ArrayList<>();
+			for (ClientInfo entry : parent.clients.values()) {
+				minimumBandwidth += entry.getMinimumBandwidth();
+				if (!entry.getIpAddress().equals(clientIP)) {
+					lists.add(entry.qualityList);
+				}
+			}
+			if (maximumBandwidth < minimumBandwidth) {
+				return maximumBandwidth / parent.getClients().size();
+			}
+
+			Map<Integer, Double> clientMap = parent.getClients().get(clientIP).getQualityList();
+
+			double maxQoE = 0;
+			int optimalBitrate = 0;
+			for (Integer bitrate : clientMap.keySet()) {
+				if (bitrate > maximumBandwidth) {
+					continue;
+				}
+				int rest = maximumBandwidth - bitrate;
+				double tempQoe = bruteForceLoop(lists, rest);
+				if (tempQoe == -1) {
+					continue;
+				}
+				double t = tempQoe;
+				tempQoe += clientMap.get(bitrate);
+				if (tempQoe > maxQoE) {
+					maxQoE = tempQoe;
+					optimalBitrate = bitrate;
+				}
+			}
+			logger.info("Optimal bitrate for total QoE of " + maxQoE + " is " + optimalBitrate);
+			return optimalBitrate;
+		}
+
+		private double bruteForceLoop(List<Map<Integer, Double>> lists, int maximumBandwidth) {
+			double maxQoE = 0;
+			if (lists.isEmpty()) {
+				return 0;
+			}
+			for (Integer bitrate : lists.get(0).keySet()) {
+				double tempQoE = 0;
+				if (bitrate > maximumBandwidth) {
+					continue;
+				}
+				if (lists.size() > 1) {
+					double returnedQoE = bruteForceLoop(lists.subList(1, lists.size()), maximumBandwidth-bitrate);
+					if (returnedQoE == -1) {
+						continue;
+					}
+					tempQoE = returnedQoE;
+				}
+				tempQoE += lists.get(0).get(bitrate);
+				if (tempQoE > maxQoE) {
+					maxQoE = tempQoE;
+				}
+			}
+			return maxQoE;
 		}
 	}
 }
