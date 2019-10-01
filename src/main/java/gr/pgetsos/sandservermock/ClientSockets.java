@@ -108,6 +108,10 @@ class ClientSockets {
 						onQualityReceived(inputLine);
 					} else if (inputLine.equals("Requesting bandwidth")) {
 						onBandwidthRequest();
+					} else if (inputLine.equals("Requesting fairness")) {
+						onFairnessRequest();
+					} else if (inputLine.equals("LastOver")) {
+						onClientFinished();
 					}
 				}
 				in.close();
@@ -167,9 +171,21 @@ class ClientSockets {
 			out.println(RECEIVED);
 		}
 
+		private void onClientFinished () {
+			parent.getClients().remove(clientIP);
+		}
+
 		private void onBandwidthRequest() {
 			if (parent.isStableMode()) {
 				double maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
+				out.println(RECEIVED + maxAllowed);
+			} else {
+				recalculateBandwidth();
+			}
+		}
+
+		private void onFairnessRequest() {
+			if (parent.isStableMode()) {
 				int qualityBased = bruteForceQuality();
 				out.println(RECEIVED + qualityBased);
 			} else {
