@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -239,44 +241,58 @@ class ClientSockets {
 					continue;
 				}
 				int rest = maximumBandwidth - bitrate;
-				double tempQoe = bruteForceLoop(lists, rest);
+				double tempQoe = bruteForceLoop(lists, rest, clientMap.get(bitrate));
 				if (tempQoe == -1) {
 					continue;
 				}
-				double t = tempQoe;
-				tempQoe += clientMap.get(bitrate);
+				if (lists.isEmpty()) {
+					tempQoe = clientMap.get(bitrate);
+				}
 				if (tempQoe > maxQoE) {
 					maxQoE = tempQoe;
 					optimalBitrate = bitrate;
 				}
 			}
-			logger.info("Optimal bitrate for total QoE of " + maxQoE + " is " + optimalBitrate);
+			logger.info("Optimal bitrate for total QoE Fairness of " + maxQoE + " is " + optimalBitrate);
 			return optimalBitrate;
 		}
 
-		private double bruteForceLoop(List<Map<Integer, Double>> lists, int maximumBandwidth) {
-			double maxQoE = 0;
+		private double bruteForceLoop(List<Map<Integer, Double>> lists, int maximumBandwidth, double... qoe) {
+			double maxFairness = 0;
 			if (lists.isEmpty()) {
 				return 0;
 			}
 			for (Integer bitrate : lists.get(0).keySet()) {
-				double tempQoE = 0;
+				double tempFairness;
 				if (bitrate > maximumBandwidth) {
 					continue;
 				}
 				if (lists.size() > 1) {
-					double returnedQoE = bruteForceLoop(lists.subList(1, lists.size()), maximumBandwidth-bitrate);
-					if (returnedQoE == -1) {
-						continue;
-					}
-					tempQoE = returnedQoE;
+					double[] temp = ArrayUtils.addAll(qoe, lists.get(0).get(bitrate));
+					tempFairness = bruteForceLoop(lists.subList(1, lists.size()), maximumBandwidth-bitrate, temp);
+				} else {
+					double[] temp = ArrayUtils.addAll(qoe, lists.get(0).get(bitrate));
+					tempFairness = getFairness(temp);
 				}
-				tempQoE += lists.get(0).get(bitrate);
-				if (tempQoE > maxQoE) {
-					maxQoE = tempQoE;
+
+				if (tempFairness > maxFairness) {
+					maxFairness = tempFairness;
 				}
 			}
-			return maxQoE;
+			return maxFairness;
+		}
+
+		private double getFairness(double... qoe) {
+			DescriptiveStatistics data = new DescriptiveStatistics();
+			for (double v : qoe) {
+				data.addValue(v);
+			}
+			//double std = data.getStandardDeviation(); // This is for sample std - wrong results
+			double std = Math.sqrt(data.getPopulationVariance());
+			double h = 0.978;
+			double l = 0.742;
+
+			return 1 - ((2*std)/(h-l));
 		}
 	}
 }
