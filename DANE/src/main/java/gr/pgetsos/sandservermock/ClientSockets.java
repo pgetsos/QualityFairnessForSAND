@@ -282,7 +282,7 @@ class ClientSockets {
 			return maxFairness;
 		}
 
-		private double getFairness(double... qoe) {
+		double getFairness(double... qoe) {
 			DescriptiveStatistics data = new DescriptiveStatistics();
 			for (double v : qoe) {
 				data.addValue(v);
@@ -292,7 +292,7 @@ class ClientSockets {
 			double h = 0.978;
 			double l = 0.742;
 
-			return 1 - ((2*std)/(h-l));
+			return 0.5 * (1 - ((2*std)/(h-l))) + 0.5 * (data.getSum()/(h*data.getN()));
 		}
 	}
 }
