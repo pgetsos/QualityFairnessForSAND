@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- MPD file Generated with GPAC version 0.8.0-rev1-gc1990d5c-master  at 2019-09-18T00:01:03.330Z-->
+<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" minBufferTime="PT1.500S" type="static" mediaPresentationDuration="PT0H2M22.080S" maxSegmentDuration="PT0H0M7.280S" profiles="urn:mpeg:dash:profile:isoff-main:2011" ><BaseURL>http://www-itec.uni-klu.ac.at/ftp/datasets/mmsys12/BigBuckBunny/bunny_2s/</BaseURL>
+ <Period duration="PT0H2M22.080S">
+  <AdaptationSet segmentAlignment="true" maxWidth="1920" maxHeight="1080" maxFrameRate="25" par="16:9" lang="und" startWithSAP="1">
+   <Representation id="1" mimeType="video/mp4" codecs="avc1.6E0028" width="1920" height="1080" frameRate="25" sar="1:1" startWithSAP="1" bandwidth="9560940">
+    <SegmentList timescale="12800" duration="64000">
+     <Initialization sourceURL="video_0_1280000/segment_init.mp4"/>
+     <SegmentURL media="video_0_1280000/segment_1.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_2.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_3.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_4.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_5.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_6.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_7.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_8.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_9.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_10.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_11.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_12.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_13.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_14.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_15.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_16.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_17.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_18.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_19.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_20.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_21.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_22.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_23.m4s"/>
+     <SegmentURL media="video_0_1280000/segment_24.m4s"/>
+    </SegmentList>
+   </Representation>
+  </AdaptationSet>
+ </Period>
+</MPD>
