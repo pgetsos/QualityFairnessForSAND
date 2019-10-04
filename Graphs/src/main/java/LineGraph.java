@@ -80,8 +80,10 @@ public class LineGraph extends JFrame {
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
 		renderer.setDefaultShapesVisible(true);
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		xAxis.setRange(0, limit);
 		xAxis.setTickUnit(new NumberTickUnit(tick));
+		yAxis.setTickUnit(new NumberTickUnit(1));
 		ChartPanel panel = new ChartPanel(chart);
 		setContentPane(panel);
 	}
@@ -143,7 +145,9 @@ public class LineGraph extends JFrame {
 		XYSeriesCollection   dataset = new XYSeriesCollection();
 
 		List<Integer> bitrates = List.of(50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 900, 1200, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 8000);
-		Map<Integer, Double> qoe = Map.ofEntries(Map.entry(50000, 0.77), Map.entry(100000, 0.89), Map.entry(150000, 0.93), Map.entry(200000, 0.92), Map.entry(250000, 0.94), Map.entry(300000, 0.95), Map.entry(400000, 0.96), Map.entry(500000, 0.97), Map.entry(600000, 0.96), Map.entry(700000, 0.96), Map.entry(900000, 0.95), Map.entry(1200000, 0.96), Map.entry(1500000, 0.97), Map.entry(2000000, 0.98), Map.entry(2500000, 0.96), Map.entry(3000000, 0.97), Map.entry(4000000, 0.98), Map.entry(5000000, 0.98), Map.entry(6000000, 0.98), Map.entry(8000000, 0.99));
+		Map<Integer, Double> qoe2= Map.ofEntries(Map.entry(50000, 0.77), Map.entry(100000, 0.89), Map.entry(150000, 0.93), Map.entry(200000, 0.92), Map.entry(250000, 0.94), Map.entry(300000, 0.95), Map.entry(400000, 0.96), Map.entry(500000, 0.97), Map.entry(600000, 0.96), Map.entry(700000, 0.96), Map.entry(900000, 0.95), Map.entry(1200000, 0.96), Map.entry(1500000, 0.97), Map.entry(2000000, 0.98), Map.entry(2500000, 0.96), Map.entry(3000000, 0.97), Map.entry(4000000, 0.98), Map.entry(5000000, 0.98), Map.entry(6000000, 0.98), Map.entry(8000000, 0.99));
+		Map<Integer, Double> qoe = Map.ofEntries(Map.entry(45652, 0.742), Map.entry(89283, 0.876), Map.entry(131087, 0.916), Map.entry(178351, 0.914), Map.entry(221600, 0.930), Map.entry(262537, 0.940), Map.entry(334349, 0.951), Map.entry(396126, 0.958), Map.entry(522286, 0.954), Map.entry(595491, 0.959), Map.entry(791182, 0.946), Map.entry(1032682, 0.957), Map.entry(1244778, 0.963), Map.entry(1546902, 0.969), Map.entry(2133691, 0.959), Map.entry(2484135, 0.964), Map.entry(3078587, 0.970), Map.entry(3526922, 0.973), Map.entry(3840360, 0.975), Map.entry(4219897, 0.978));
+
 		for (Entry entry : entries) {
 			XYSeries series = new XYSeries(entry.getName());
 			int counter = 1;

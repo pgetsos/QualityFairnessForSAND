@@ -7,8 +7,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		LogRenamer.renameAllLogs("");
-		LogRenamer.renameAllLogs("1.3");
-		LogRenamer.renameAllLogs("18");
+//		LogRenamer.renameAllLogs("1.3");
+		LogRenamer.renameAllLogs("6");
+		LogRenamer.renameAllLogs("12");
 
 		ExperimentAnalyzer analyzer = new ExperimentAnalyzer();
 

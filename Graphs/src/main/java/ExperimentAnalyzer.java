@@ -13,19 +13,21 @@ public class ExperimentAnalyzer {
 	private static final String BUFFER_Y_AXIS = "Buffer Size";
 
 	public void runAll() {
-//		analyzeSingle("1.3");
+//		analyzeSingle("6");
 //		analyzeSingle("18");
 
-		analyzeMultiplePerAlgorithm("18", 2, "sync", "basic");
-		analyzeMultiplePerAlgorithm("18", 3, "sync", "basic");
-		analyzeMultiplePerAlgorithm("18", 2, "sync", "netflix");
-		analyzeMultiplePerAlgorithm("18", 3, "sync", "netflix");
-		analyzeMultiplePerAlgorithm("18", 2, "sync", "sara");
-		analyzeMultiplePerAlgorithm("18", 3, "sync", "sara");
-		analyzeMultiplePerAlgorithm("18", 2, "sync", "sandqoe");
-		analyzeMultiplePerAlgorithm("18", 3, "sync", "sandqoe");
-		analyzeMultiplePerAlgorithm("18", 2, "sync", "sandbanddiv");
-		analyzeMultiplePerAlgorithm("18", 3, "sync", "sandbanddiv");
+//		analyzeMultiplePerAlgorithm("18", 2, "sync", "basic");
+//		analyzeMultiplePerAlgorithm("6", 3, "sync", "basic");
+//		analyzeMultiplePerAlgorithm("18", 2, "sync", "netflix");
+//		analyzeMultiplePerAlgorithm("18", 3, "sync", "netflix");
+//		analyzeMultiplePerAlgorithm("18", 2, "sync", "sara");
+//		analyzeMultiplePerAlgorithm("18", 3, "sync", "sara");
+//		analyzeMultiplePerAlgorithm("6", 2, "sync", "sandqoe");
+//		analyzeMultiplePerAlgorithm("6", 3, "sync", "sandqoe");
+//		analyzeMultiplePerAlgorithm("6", 2, "sync", "sandbanddiv");
+//		analyzeMultiplePerAlgorithm("6", 3, "sync", "sandbanddiv");
+		analyzeMultiplePSDN("12", 3, "stp", "netflix");
+		analyzeMultiplePSDN("12", 3, "stp", "sara");
 	}
 
 	private void analyzeSingle(String folder) {
@@ -55,6 +57,28 @@ public class ExperimentAnalyzer {
 		List<Entry> entries = new java.util.ArrayList<>(List.of(client1, client2));
 		if (clients == 3) {
 			Entry client3 = logReader.readEntry(folder + "/" + clients + "clients" + mode + algorithm+ "_c3.log", "Client3");
+			entries.add(client3);
+		}
+
+		String segmentTitle = String.format("Bandwidth per segment\n%sMbps Total Link Capacity - %d clients - %s", folder, clients, algorithm);
+		String bufferTitle = String.format("Buffer per segment\n%sMbps Total Link Capacity - %d clients - %s", folder, clients, algorithm);
+		String qoeTitle = String.format("QoE per segment\n%sMbps Total Link Capacity - %d clients - %s", folder, clients, algorithm);
+
+		LineGraph bwPerSegment = chartCreatorSingle(SEGMENT, entries, segmentTitle, SEGMENT_SHORT_X_AXIS, BITRATE_Y_AXIS, 100, 10);
+		LineGraph bufferPerSegment = chartCreatorSingle(BUFFER, entries, bufferTitle, TIME_X_AXIS, BUFFER_Y_AXIS, 600, 20);
+		LineGraph qoePerSegment = chartCreatorSingle(QOE, entries, qoeTitle, SEGMENT_SHORT_X_AXIS, QOE, 100, 10);
+
+		bwPerSegment.setVisible(true);
+		bufferPerSegment.setVisible(true);
+		qoePerSegment.setVisible(true);
+	}
+
+	private void analyzeMultiplePSDN(String folder, int clients, String mode, String algorithm) {
+		Entry client1 = logReader.readEntry(folder + "/"+ mode + algorithm+ "_c1.log", "Client1");
+		Entry client2 = logReader.readEntry(folder + "/"+ mode + algorithm+ "_c2.log", "Client2");
+		List<Entry> entries = new java.util.ArrayList<>(List.of(client1, client2));
+		if (clients == 3) {
+			Entry client3 = logReader.readEntry(folder + "/" + mode + algorithm+ "_c3.log", "Client3");
 			entries.add(client3);
 		}
 

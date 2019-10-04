@@ -59,8 +59,8 @@ public class Helpers {
 		if (line.contains("Bytes") && line.contains("bits")) {
 			String bitsString = line.split("ytes")[1].strip().split(" ")[0];
 			double dbits = Double.parseDouble(bitsString);
-			bits = line.contains("Kbits") ? (int) (dbits*1024) : (int) dbits;
-			bits = line.contains("Mbits") ? (int) (dbits*1024*1024) : (int) dbits;
+			bits = line.contains("Kbits") ? (int) (dbits*1000) : (int) dbits;
+			bits = line.contains("Mbits") ? (int) (dbits*1000*1000) : (int) dbits;
 		}
 		return bits;
 	}
