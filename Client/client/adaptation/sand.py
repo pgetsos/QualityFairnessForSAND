@@ -66,7 +66,7 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
 
     send_status_message(client_socket, bandwidth_message)
     send_status_message(client_socket, level_message)
-    send_status_message(client_socket, buffer_size)
+    send_status_message(client_socket, buffer_message)
     send_status_message(client_socket, quality_message)
     requested_rate = send_request_message(client_socket, request_message)
 
