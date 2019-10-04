@@ -13,6 +13,7 @@ public class ExperimentAnalyzer {
 	private static final String BUFFER_Y_AXIS = "Buffer Size";
 
 	public void runAll() {
+		analyzeSingle("1.3");
 //		analyzeSingle("6");
 //		analyzeSingle("18");
 
@@ -26,18 +27,18 @@ public class ExperimentAnalyzer {
 //		analyzeMultiplePerAlgorithm("6", 3, "sync", "sandqoe");
 //		analyzeMultiplePerAlgorithm("6", 2, "sync", "sandbanddiv");
 //		analyzeMultiplePerAlgorithm("6", 3, "sync", "sandbanddiv");
-		analyzeMultiplePSDN("12", 3, "stp", "netflix");
-		analyzeMultiplePSDN("12", 3, "stp", "sara");
+//		analyzeMultiplePSDN("12", 3, "stp", "netflix");
+//		analyzeMultiplePSDN("12", 3, "stp", "sara");
 	}
 
 	private void analyzeSingle(String folder) {
 		Entry basic = logReader.readEntry(folder + "/1clientbasic_c1.log", "Basic");
 		Entry netflix = logReader.readEntry(folder + "/1clientnetflix_c1.log", "Buffer Based");
 		Entry sara = logReader.readEntry(folder + "/1clientsara_c1.log", "Sara");
-		Entry sandbd = logReader.readEntry(folder + "/1clientsandbanddiv_c1.log", "SAND - BW Division");
+//		Entry sandbd = logReader.readEntry(folder + "/1clientsandbanddiv_c1.log", "SAND - BW Division");
 		Entry sandqoe = logReader.readEntry(folder + "/1clientsandqoe_c1.log", "SAND - QoE Fairness");
 
-		List<Entry> entries = List.of(basic, netflix, sara, sandbd, sandqoe);
+		List<Entry> entries = List.of(basic, netflix, sara, sandqoe);
 		String segmentTitle = String.format("Bandwidth per segment - %sMbps Total Link Capacity - 1 client", folder);
 		String bufferTitle = String.format("Buffer per segment - %sMbps Total Link Capacity - 1 client", folder);
 		String qoeTitle = String.format("QoE per segment - %sMbps Total Link Capacity - 1 client", folder);

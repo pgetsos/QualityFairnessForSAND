@@ -9,6 +9,7 @@ public class ClientInfo {
 	double qualityScore;
 	int minimumBandwidth;
 	int sharingWith;
+	int buffer;
 	boolean stalled;
 	Map<Integer, Double> qualityList;
 
@@ -87,6 +88,14 @@ public class ClientInfo {
 
 	public void setQualityList(Map<Integer, Double> qualityList) {
 		this.qualityList = qualityList;
+	}
+
+	public int getBuffer() {
+		return buffer;
+	}
+
+	public void setBuffer(int buffer) {
+		this.buffer = buffer;
 	}
 
 	@Override

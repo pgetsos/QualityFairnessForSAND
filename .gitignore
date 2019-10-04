@@ -2,3 +2,7 @@
 *.log
 .idea/
 .gradle/
+*.json
+*.mpd
+*.mpd
+Client/client/BigBuckBunny_2s_isoffmain_DIS_23009_1_v_2_1c2_2011_08_30.mpd

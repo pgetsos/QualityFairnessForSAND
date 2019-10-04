@@ -104,6 +104,8 @@ class ClientSockets {
 						onBandwidthReceived(inputLine);
 					} else if (inputLine.startsWith("Level")) {
 						onLevelReceived(inputLine);
+					} else if (inputLine.startsWith("Buffer")) {
+						onBufferReceived(inputLine);
 					} else if (inputLine.startsWith("Stalling")) {
 						onStallingReceived(inputLine);
 					} else if (inputLine.startsWith("Quality")) {
@@ -166,6 +168,13 @@ class ClientSockets {
 			out.println(RECEIVED);
 		}
 
+		private void onBufferReceived (String line) {
+			String bufferString = line.split(":")[1].trim();
+			int buffer = Integer.parseInt(bufferString);
+			parent.getClients().get(clientIP).setBuffer(buffer);
+			out.println(RECEIVED);
+		}
+
 		private void onStallingReceived (String line) {
 			String stallString = line.split(":")[1].trim();
 			boolean stalled = stallString.equals("true");
@@ -182,7 +191,10 @@ class ClientSockets {
 				double maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
 				out.println(RECEIVED + maxAllowed);
 			} else {
-				recalculateBandwidth();
+				double recalculated = recalculateBandwidth();
+				parent.setCalculatedBandwidth((int) recalculated*parent.getClients().size());
+				out.println(RECEIVED + recalculated);
+				logger.info("Recalculating... " + parent.getCalculatedBandwidth());
 			}
 		}
 
@@ -191,29 +203,35 @@ class ClientSockets {
 				int qualityBased = bruteForceQuality();
 				out.println(RECEIVED + qualityBased);
 			} else {
-				recalculateBandwidth();
+				double recalculated = recalculateBandwidth();
+				parent.setCalculatedBandwidth((int) recalculated*parent.getClients().size());
+				int qualityBased = bruteForceQuality();
+				out.println(RECEIVED + qualityBased);
+				logger.info("Recalculating... " + parent.getCalculatedBandwidth());
 			}
 		}
 
-		private void recalculateBandwidth() {
+		private double recalculateBandwidth() {
 			int max = parent.getCalculatedBandwidth();
 			int clientMax = 0;
 			ClientInfo client = parent.getClients().get(clientIP);
 			for (ClientInfo clientInfo : parent.getClients().values()) {
 				clientMax += clientInfo.getLastMeasuredBandwidth();
 			}
-			if (clientMax > max) {
+			if (clientMax >= max) {
 				max = clientMax;
 				parent.setCalculatedBandwidth(max);
-				double maxAllowed = parent.getCalculatedBandwidth() / parent.getClients().size();
-				out.println(maxAllowed);
-			} else if (clientMax < max) {
+				return parent.getCalculatedBandwidth() / parent.getClients().size();
+			} else {
 				if (client.getLastLevel() > client.getLastMeasuredBandwidth()) {
-					double maxAllowed = (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
-					out.println(maxAllowed);
+					return  (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
 				} else {
 					double maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
-					out.println(maxAllowed * 1.05);
+					if (client.getBuffer() > 4) {
+						return  (maxAllowed * 1.05);
+					} else {
+						return  (maxAllowed);
+					}
 				}
 			}
 		}

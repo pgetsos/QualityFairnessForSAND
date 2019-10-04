@@ -9,7 +9,7 @@ PORT = 3535
 
 
 def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, previous_segment_times,
-         current_bitrate, ip, recent_segment_qualities, quality_score_bitrates, last, fair):
+         current_bitrate, ip, recent_segment_qualities, quality_score_bitrates, last, fair, buffer_size):
     """
     Module to predict the next_bitrate using the basic_dash algorithm. Selects the bitrate that is one lower than the
     current network capacity.
@@ -51,6 +51,7 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
     ip_message = "IP: " + ip
     bandwidth_message = "Bandwidth: " + str(download_rate)
     level_message = "Level: " + str(current_bitrate)
+    buffer_message = "Buffer: " + str(buffer_size)
     quality_message = "Quality: " + str(total_quality_score)
     request_message = "Requesting bandwidth"
     if fair == "true":
@@ -65,6 +66,7 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
 
     send_status_message(client_socket, bandwidth_message)
     send_status_message(client_socket, level_message)
+    send_status_message(client_socket, buffer_size)
     send_status_message(client_socket, quality_message)
     requested_rate = send_request_message(client_socket, request_message)
 
@@ -77,7 +79,10 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
     best_bitrate = float(requested_rate)
 
     for index, bitrate in enumerate(bitrates[1:], 1):
-        if best_bitrate > bitrate * 0.999:
+        if buffer_size == 0:
+            if best_bitrate > bitrate * 1.01:
+                next_rate = bitrate
+        elif best_bitrate > bitrate * 0.999:
             next_rate = bitrate
         else:
             break

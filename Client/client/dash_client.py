@@ -283,10 +283,11 @@ def start_playback_smart(dp_object, domain, playback_type=None, download=False, 
             current_bitrate, average_dwn_time = sand.sand(segment_number, bitrates, average_dwn_time,
                                                             recent_download_sizes, previous_segment_times,
                                                           current_bitrate, ip, recent_segment_qualities,
-                                                          quality_score_bitrates, segment_number==len(dp_list), FAIR.lower())
+                                                          quality_score_bitrates, segment_number==len(dp_list), FAIR.lower(),
+                                                          dash_player.buffer.qsize())
 
-            if dash_player.buffer.qsize() > config_dash.BASIC_THRESHOLD:
-                delay = dash_player.buffer.qsize() - config_dash.BASIC_THRESHOLD
+            # if dash_player.buffer.qsize() > config_dash.BASIC_THRESHOLD:
+            #     delay = dash_player.buffer.qsize() - config_dash.BASIC_THRESHOLD
             config_dash.LOG.debug(
                 "SAND-DASH: Selected {} for the segment {}".format(current_bitrate,
                                                                     segment_number + 1))
