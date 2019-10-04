@@ -76,15 +76,11 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
 
     best_bitrate = float(requested_rate)
 
-    # Check if we need to increase or decrease bitrate
-    if current_bitrate == bitrates[-1]:
-        next_rate = current_bitrate
-    else:
-        for index, bitrate in enumerate(bitrates[1:], 1):
-            if best_bitrate > bitrate * 0.999:
-                next_rate = bitrate
-            else:
-                break
+    for index, bitrate in enumerate(bitrates[1:], 1):
+        if best_bitrate > bitrate * 0.999:
+            next_rate = bitrate
+        else:
+            break
 
     config_dash.LOG.info("SAND Adaptation: Download Rate = {}, next_bitrate = {}, suggested bitrate = {}".format(download_rate, next_rate, best_bitrate))
     return next_rate, updated_dwn_time
