@@ -61,6 +61,10 @@ public class Helpers {
 			double dbits = Double.parseDouble(bitsString);
 			bits = line.contains("Kbits") ? (int) (dbits*1000) : (int) dbits;
 			bits = line.contains("Mbits") ? (int) (dbits*1000*1000) : (int) dbits;
+
+			if (line.contains("10.8")) {
+				bits = bits * 10.8 / 11;
+			}
 		}
 		return bits;
 	}
