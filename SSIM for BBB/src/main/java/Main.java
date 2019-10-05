@@ -21,16 +21,16 @@ public class Main {
 //		List<Integer> bits480 = List.of(600, 700);
 //		List<Integer> bits720 = List.of(900, 1200, 1500, 2000);
 //		List<Integer> bits1080 = List.of(2500, 3000, 4000, 5000, 6000, 8000);
-		List<Integer> bits240 = List.of(45652, 89283, 131087);
-		List<Integer> bits360 = List.of(178351, 221600, 262537, 334349, 396126);
-		List<Integer> bits480 = List.of(522286, 595491);
-		List<Integer> bits720 = List.of(791182, 1032682, 1244778, 1546902);
-		List<Integer> bits1080 = List.of(2133691, 2484135, 3078587, 3526922, 3840360, 4219897);
-//		List<Integer> bits240 = List.of(45373, 88482, 127412);
-//		List<Integer> bits360 = List.of(176780, 216536, 252988, 317328, 368912);
-//		List<Integer> bits480 = List.of(503270, 568500);
-//		List<Integer> bits720 = List.of(771359, 987061, 1174238, 1431232);
-//		List<Integer> bits1080 = List.of(2070985, 2384387, 2884382, 3245900, 3493765, 3792491);
+//		List<Integer> bits240 = List.of(45652, 89283, 131087);
+//		List<Integer> bits360 = List.of(178351, 221600, 262537, 334349, 396126);
+//		List<Integer> bits480 = List.of(522286, 595491);
+//		List<Integer> bits720 = List.of(791182, 1032682, 1244778, 1546902);
+//		List<Integer> bits1080 = List.of(2133691, 2484135, 3078587, 3526922, 3840360, 4219897);
+		List<Integer> bits240 = List.of(45373, 88482, 127412);
+		List<Integer> bits360 = List.of(176780, 216536, 252988, 317328, 368912);
+		List<Integer> bits480 = List.of(503270, 568500);
+		List<Integer> bits720 = List.of(771359, 987061, 1174238, 1431232);
+		List<Integer> bits1080 = List.of(2070985, 2384387, 2884382, 3245900, 3493765, 3792491);
 
 		Map<String, List<Double>> vars = Map.of("240", vars240, "360", vars360, "480", vars480, "720", vars720, "1080", vars1080);
 		Map<String, List<Integer>> bits = Map.of("240", bits240, "360", bits360, "480", bits480, "720", bits720, "1080", bits1080);
