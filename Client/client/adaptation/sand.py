@@ -79,7 +79,7 @@ def sand(segment_number, bitrates, average_dwn_time, recent_download_sizes, prev
     best_bitrate = float(requested_rate)
 
     for index, bitrate in enumerate(bitrates[1:], 1):
-        if buffer_size == 0:
+        if buffer_size < 2:
             if best_bitrate > bitrate * 1.01:
                 next_rate = bitrate
         elif best_bitrate > bitrate * 0.999:

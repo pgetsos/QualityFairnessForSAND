@@ -227,9 +227,9 @@ class ClientSockets {
 				return parent.getCalculatedBandwidth() / parent.getClients().size();
 			} else {
 				if (client.getLastLevel() > client.getLastMeasuredBandwidth()) {
-					if (client.getBuffer() > 4) {
-						return parent.getCalculatedBandwidth() / parent.getClients().size()
-;					} else {
+					if (client.getBuffer() > 2) {
+						return client.getLastLevel();
+					} else {
 						return  (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
 					}
 				} else {
