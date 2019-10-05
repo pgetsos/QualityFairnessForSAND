@@ -60,7 +60,9 @@ public class Helpers {
 			String bitsString = line.split("ytes")[1].strip().split(" ")[0];
 			double dbits = Double.parseDouble(bitsString);
 			if (line.contains("10.8")) {
-				dbits = dbits * 10.8 / 11;
+				dbits = dbits * 0.99 * 10.8 / 11;
+			} else if (line.contains("10.4")) {
+				dbits = dbits * 0.99 * 10.4 / 10.6;
 			}
 			if (line.contains("Kbits")) {
 				bits = (int) (dbits * 1000);

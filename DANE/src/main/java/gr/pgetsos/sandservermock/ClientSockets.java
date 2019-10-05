@@ -221,7 +221,7 @@ class ClientSockets {
 			for (ClientInfo clientInfo : parent.getClients().values()) {
 				clientMax += clientInfo.getLastMeasuredBandwidth();
 			}
-			if (clientMax >= max*1.25) {
+			if (clientMax >= max*1.05) {
 				max = (int) (clientMax*0.9);
 				parent.setCalculatedBandwidth(max);
 				return parent.getCalculatedBandwidth() / parent.getClients().size();
@@ -234,10 +234,7 @@ class ClientSockets {
 					}
 				} else {
 					double maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
-					if (client.getBuffer() > 2) {
-						return parent.getCalculatedBandwidth() / parent.getClients().size();
-					} else {
-						return  (maxAllowed);
+					return  (maxAllowed);
 					}
 				}
 			}
