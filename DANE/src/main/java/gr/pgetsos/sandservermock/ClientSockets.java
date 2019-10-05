@@ -215,20 +215,27 @@ class ClientSockets {
 			int max = parent.getCalculatedBandwidth();
 			int clientMax = 0;
 			ClientInfo client = parent.getClients().get(clientIP);
+			if (client.getLastMeasuredBandwidth() == -1) {
+				return parent.getCalculatedBandwidth() / parent.getClients().size();
+			}
 			for (ClientInfo clientInfo : parent.getClients().values()) {
 				clientMax += clientInfo.getLastMeasuredBandwidth();
 			}
-			if (clientMax >= max) {
-				max = clientMax;
+			if (clientMax >= max*1.25) {
+				max = (int) (clientMax*0.9);
 				parent.setCalculatedBandwidth(max);
 				return parent.getCalculatedBandwidth() / parent.getClients().size();
 			} else {
 				if (client.getLastLevel() > client.getLastMeasuredBandwidth()) {
-					return  (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
+					if (client.getBuffer() > 4) {
+						return parent.getCalculatedBandwidth() / parent.getClients().size()
+;					} else {
+						return  (client.getLastLevel() + client.getLastMeasuredBandwidth()) / 2;
+					}
 				} else {
 					double maxAllowed = ((parent.getCalculatedBandwidth() / parent.getClients().size()) + client.getLastMeasuredBandwidth()) / 2;
-					if (client.getBuffer() > 4) {
-						return  (maxAllowed * 1.05);
+					if (client.getBuffer() > 2) {
+						return parent.getCalculatedBandwidth() / parent.getClients().size();
 					} else {
 						return  (maxAllowed);
 					}

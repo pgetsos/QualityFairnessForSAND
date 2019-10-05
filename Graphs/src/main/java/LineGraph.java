@@ -103,7 +103,7 @@ public class LineGraph extends JFrame {
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		xAxis.setRange(0, limit);
-		yAxis.setRange(0.75, 1);
+		yAxis.setRange(0.74, 1);
 		xAxis.setTickUnit(new NumberTickUnit(tick));
 		ChartPanel panel = new ChartPanel(chart);
 		setContentPane(panel);
