@@ -7,6 +7,7 @@ public class Entry {
 	private String name;
 	private List<Integer> playingBitrate = new ArrayList<>();
 	private List<Integer> bufferState = new ArrayList<>();
+	private List<Double> qoeMetrics = new ArrayList<>();
 	private Map<Integer, Integer> bufferPerSecond = new HashMap<>();
 
 	public List<Integer> getPlayingBitrate() {
@@ -39,5 +40,13 @@ public class Entry {
 
 	public void setBufferPerSecond(Map<Integer, Integer> bufferPerSecond) {
 		this.bufferPerSecond = bufferPerSecond;
+	}
+
+	public List<Double> getQoeMetrics() {
+		return qoeMetrics;
+	}
+
+	public void setQoeMetrics(List<Double> qoeMetrics) {
+		this.qoeMetrics = qoeMetrics;
 	}
 }
