@@ -1,10 +1,12 @@
+package gr.pgetsos.graphs.Helpers;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class LogRenamer {
 	public static void renameAllLogs(String subfolder) {
-		Path resourceDirectoryPath = Paths.get("src","main", "resources", subfolder);
+		Path resourceDirectoryPath = Paths.get("build","resources", "main", subfolder);
 		File resourceDirectory = new File(resourceDirectoryPath.toUri());
 		File[] listOfFiles = resourceDirectory.listFiles();
 		if (listOfFiles == null) {

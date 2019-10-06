@@ -1,3 +1,4 @@
+package gr.pgetsos.graphs.Helpers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,21 +12,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import gr.pgetsos.graphs.Entry;
 
 public class LogReader {
 	private static final Logger logger = LogManager.getLogger("CSVLoader");
 	private static final String SPLITTER = "Action=Writing,Bitrate=";
 	private static final String SEC_SPLITTER = "Action=StillPlaying,Bitrate=";
 
-	public Entry readEntry(String file, String entryName){
+	public Entry readEntry(String folder, String file, String entryName){
 		ArrayList<Integer> bitrates = new ArrayList<>(100);
 		ArrayList<Integer> buffer = new ArrayList<>(100);
 		ArrayList<Double> qoeMetrics = new ArrayList<>(100);
-		Map<Integer, Double> qoe = Map.ofEntries(Map.entry(45652, 0.742), Map.entry(89283, 0.876), Map.entry(131087, 0.916), Map.entry(178351, 0.914), Map.entry(221600, 0.930), Map.entry(262537, 0.940), Map.entry(334349, 0.951), Map.entry(396126, 0.958), Map.entry(522286, 0.954), Map.entry(595491, 0.959), Map.entry(791182, 0.946), Map.entry(1032682, 0.957), Map.entry(1244778, 0.963), Map.entry(1546902, 0.969), Map.entry(2133691, 0.959), Map.entry(2484135, 0.964), Map.entry(3078587, 0.970), Map.entry(3526922, 0.973), Map.entry(3840360, 0.975), Map.entry(4219897, 0.978));
+		Map<Integer, Double> qoe = Helpers.getQoEMap(folder);
 		Map<Integer, Integer> bufferPerSecond = new HashMap<>(100);
-
 		try {
-			Path path = Paths.get(this.getClass().getResource(file).toURI());
+			Path path = Paths.get(this.getClass().getClassLoader().getResource(folder + "/" + file).toURI());
 			try (Stream<String> lines = Files.lines(path)) {
 				lines.forEachOrdered(line -> {
 					if (line.contains(SPLITTER)) {

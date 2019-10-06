@@ -1,3 +1,5 @@
+package gr.pgetsos.graphs.Helpers;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -12,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import gr.pgetsos.graphs.Entry;
 
 public class ExcelWriter {
 
@@ -28,9 +32,9 @@ public class ExcelWriter {
         CreationHelper createHelper = workbook.getCreationHelper();
 
         // Create a Sheet
-        Entry client1 = logReader.readEntry(folder + "/"+ mode + algorithm+ "_c1.log", "Client1");
-        Entry client2 = logReader.readEntry(folder + "/"+ mode + algorithm+ "_c2.log", "Client2");
-        Entry client3 = logReader.readEntry(folder + "/"+ mode + algorithm+ "_c3.log", "Client3");
+        Entry client1 = logReader.readEntry(folder,mode + algorithm+ "_c1.log", "Client1");
+        Entry client2 = logReader.readEntry(folder,mode + algorithm+ "_c2.log", "Client2");
+        Entry client3 = logReader.readEntry(folder,mode + algorithm+ "_c3.log", "Client3");
 
         entries.add(client1);
         entries.add(client2);
