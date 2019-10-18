@@ -1,5 +1,6 @@
 package gr.pgetsos.graphs;
 
+import gr.pgetsos.graphs.Helpers.GraphImpl;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,7 +19,7 @@ import javax.swing.JFrame;
 
 import gr.pgetsos.graphs.Entry;
 
-public class LineGraph extends JFrame {
+public class LineGraph extends JFrame implements GraphImpl {
 
 	private static final long serialVersionUID = 1L;
 	private String title;

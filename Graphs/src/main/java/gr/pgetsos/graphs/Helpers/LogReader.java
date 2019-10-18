@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import gr.pgetsos.graphs.Entry;
 
@@ -25,6 +26,11 @@ public class LogReader {
 		ArrayList<Double> qoeMetrics = new ArrayList<>(100);
 		Map<Integer, Double> qoe = Helpers.getQoEMap(folder);
 		Map<Integer, Integer> bufferPerSecond = new HashMap<>(100);
+		AtomicInteger interruptions = new AtomicInteger(0);
+		AtomicInteger shortInterruptions = new AtomicInteger(0);
+		AtomicInteger longInterruptions = new AtomicInteger(0);
+
+
 		try {
 			Path path = Paths.get(this.getClass().getClassLoader().getResource(folder + "/" + file).toURI());
 			try (Stream<String> lines = Files.lines(path)) {
@@ -40,6 +46,13 @@ public class LogReader {
 						String time = line.split("EpochTime=")[1].split("\\.")[0];
 						String buffered = line.split("CurrentBufferSize=")[1].split(",")[0];
 						bufferPerSecond.put(Integer.parseInt(time), Integer.parseInt(buffered));
+					} else if (line.contains("interruption")) {
+						interruptions.incrementAndGet();
+						if (Double.parseDouble(line.split(" = ")[1]) < 0.5) {
+							shortInterruptions.incrementAndGet();
+						} else {
+							longInterruptions.incrementAndGet();
+						}
 					}
 				});
 			}
@@ -55,6 +68,9 @@ public class LogReader {
 		entry.setBufferState(buffer);
 		entry.setBufferPerSecond(bufferPerSecond);
 		entry.setQoeMetrics(qoeMetrics);
+		entry.setNumberOfInterruptions(interruptions.get());
+		entry.setNumberOfShortInterruptions(shortInterruptions.get());
+		entry.setNumberOfLongInterruptions(longInterruptions.get());
 		return entry;
 	}
 }

@@ -11,12 +11,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		LogRenamer.renameAllLogs("");
-		LogRenamer.renameAllLogs("1.3");
-		LogRenamer.renameAllLogs("6");
+		LogRenamer.renameAllLogs("1.3 total");
+		LogRenamer.renameAllLogs("6 total");
 		LogRenamer.renameAllLogs("1.3 10s");
+		LogRenamer.renameAllLogs("6 10s");
 
-		ExperimentAnalyzer analyzer = new ExperimentAnalyzer();
+		ExperimentRunner runner = new ExperimentRunner();
 
-		analyzer.runAll();
+		runner.runAll();
 	}
 }

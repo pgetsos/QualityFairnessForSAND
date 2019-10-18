@@ -25,6 +25,7 @@ public class EntryCreator {
 		ArrayList<Double> qoeMetrics = new ArrayList<>(100);
 		Map<Integer, Integer> bufferPerSecond = new HashMap<>(100);
 		Map<Integer, Double> qoe = Helpers.getQoEMap(folder);
+		double tempMeanQoE = 0;
 
 		for (int i = 1; i < entries.get(0).getPlayingBitrate().size(); i++) {
 			int totalBitrate = 0;
@@ -37,11 +38,25 @@ public class EntryCreator {
 			bitrates.add(totalBitrate/entries.size());
 			qoeMetrics.add(tempQoE/entries.size());
 			bufferPerSecond.put((i-1)*2,  totalBufferPerSecond/entries.size());
+
+			tempMeanQoE += tempQoE/entries.size();
 		}
+
+		double tempAdjustedQoE = 0;
+
+		for (Entry entry : entries) {
+			tempAdjustedQoE += entry.getAdjustedQoE();
+		}
+
+		double meandQoE = tempMeanQoE/entries.get(0).getPlayingBitrate().size();
+		double adjustedQoE = tempAdjustedQoE/entries.size();
+
 		Entry newEntry = new Entry();
 		newEntry.setPlayingBitrate(bitrates);
 		newEntry.setBufferPerSecond(bufferPerSecond);
 		newEntry.setQoeMetrics(qoeMetrics);
+		newEntry.setMeanQoE(meandQoE);
+		newEntry.setAdjustedQoE(adjustedQoE);
 		return newEntry;
 	}
 
@@ -60,9 +75,17 @@ public class EntryCreator {
 			bitrates.add(totalBitrate);
 			qoeMetrics.add(tempQoE);
 		}
+
+		double tempAdjustedQoE = 0;
+
+		for (Entry entry : entries) {
+			tempAdjustedQoE += entry.getAdjustedQoE();
+		}
+
 		Entry newEntry = new Entry();
 		newEntry.setPlayingBitrate(bitrates);
 		newEntry.setQoeMetrics(qoeMetrics);
+		newEntry.setAdjustedQoE(tempAdjustedQoE);
 		return newEntry;
 	}
 }

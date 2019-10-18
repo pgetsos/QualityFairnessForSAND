@@ -242,6 +242,9 @@ class ClientSockets {
 		private int bruteForceQuality() {
 			double minimumBandwidth = 0;
 			int maximumBandwidth = parent.getCalculatedBandwidth();
+			if (parent.getClients().get(clientIP).getBuffer() <=2) {
+				maximumBandwidth = (int) (maximumBandwidth * 0.95);
+			}
 			List<Map<Integer, Double>> lists = new ArrayList<>();
 			for (ClientInfo entry : parent.clients.values()) {
 				minimumBandwidth += entry.getMinimumBandwidth();
