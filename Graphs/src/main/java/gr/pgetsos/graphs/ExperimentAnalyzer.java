@@ -24,21 +24,17 @@ public class ExperimentAnalyzer {
 	private static final String SEGMENT = "Segments";
 	private static final String BUFFER = "Buffer";
 	private static final String QOE = "QoE";
+	private static final String FAIRNESS = "Fair Index";
 	private static final String SEGMENT_SHORT_X_AXIS = "Segment (2s per segment)";
 	private static final String SEGMENT_LONG_X_AXIS = "Segment (10s per segment)";
 	private static final String ADJUSTED_X_AXIS = "Segment size - QoE measurement";
+	private static final String SEGMENT_X_AXIS = "Segment size";
 	private static final String TIME_X_AXIS = "Time (in seconds)";
 	private static final String BITRATE_Y_AXIS = "Bitrate";
 	private static final String BUFFER_Y_AXIS = "Buffer Size";
 
 	void analyzeSingle(String folder, int limit, String mbps) {
-		Entry basic = logReader.readEntry(folder, "1clientbasic_c1.log", "Basic");
-		Entry netflix = logReader.readEntry(folder, "1clientnetflix_c1.log", "Buffer Based");
-		Entry sara = logReader.readEntry(folder, "1clientsara_c1.log", "Sara");
-		Entry sandbd = logReader.readEntry(folder, "1clientsandbanddiv_c1.log", "SAND - BW Division");
-		Entry sandqoe = logReader.readEntry(folder, "1clientsandqoe_c1.log", "SAND - QoE Fairness");
-
-		List<Entry> entries = List.of(basic, netflix, sara, sandbd, sandqoe);
+		List<Entry> entries = getSingleEntries(folder);
 		String segmentTitle = String.format("Bandwidth per segment - %sMbps Total Link Capacity - 1 client", mbps);
 		String bufferTitle = String.format("Buffer per segment - %sMbps Total Link Capacity - 1 client", mbps);
 		String qoeTitle = String.format("QoE per segment - %sMbps Total Link Capacity - 1 client", mbps);
@@ -52,6 +48,35 @@ public class ExperimentAnalyzer {
 		saveChartS(folder, bwPerSegment);
 		saveChartS(folder, bufferPerSegment);
 		saveChartS(folder, qoePerSegment);
+	}
+
+	void analyzeSingleAdjusted(String folder, String folderAlt, String mbps) {
+		List<Entry> entries = new ArrayList<>(getSingleEntries(folder));
+		List<Entry> entriesAlt = new ArrayList<>(getSingleEntries(folderAlt));
+
+		getAdjustedQoE(entries);
+		getAdjustedQoE(entriesAlt);
+
+		for (int i = 0; i < entries.size(); i++) {
+			entries.set(i, entryCreator.getMeanEntry(List.of(entries.get(i)), folder));
+			entriesAlt.set(i, entryCreator.getMeanEntry(List.of(entriesAlt.get(i)), folderAlt));
+		}
+
+		String title = String.format("Average QoE%n%sMbps Total Link Capacity - 1 client", mbps);
+
+		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, QOE, 10);
+
+		saveChartS(folder, graph);
+	}
+
+	private List<Entry> getSingleEntries(String folder) {
+		Entry basic = logReader.readEntry(folder, "1clientbasic_c1.log", "Basic");
+		Entry netflix = logReader.readEntry(folder, "1clientnetflix_c1.log", "Buffer Based");
+		Entry sara = logReader.readEntry(folder, "1clientsara_c1.log", "Sara");
+		Entry sandbd = logReader.readEntry(folder, "1clientsandbanddiv_c1.log", "SAND - BW Division");
+		Entry sandqoe = logReader.readEntry(folder, "1clientsandqoe_c1.log", "SAND - QoE Fairness");
+
+		return List.of(basic, netflix, sara, sandbd, sandqoe);
 	}
 
 	void analyzeMultiplePerAlgorithm(String folder, int clients, String mode, String algorithm, int limit, String mbps) {
@@ -109,11 +134,11 @@ public class ExperimentAnalyzer {
 		List<Entry> entries = new ArrayList<>(5);
 		List<Entry> entriesAlt = new ArrayList<>(5);
 		for (String algorithm : algorithms) {
-			List<Entry> tempEnties = entryCreator.getEntries(folder, clients, mode, algorithm);
+			List<Entry> tempEntries = entryCreator.getEntries(folder, clients, mode, algorithm);
 			List<Entry> tempEntriesAlt = entryCreator.getEntries(folderAlt, clients, mode, algorithm);
-			getAdjustedQoE(tempEnties);
+			getAdjustedQoE(tempEntries);
 			getAdjustedQoE(tempEntriesAlt);
-			Entry meanEntry = entryCreator.getMeanEntry(tempEnties, folder);
+			Entry meanEntry = entryCreator.getMeanEntry(tempEntries, folder);
 			Entry meanEntryAlt = entryCreator.getMeanEntry(tempEntriesAlt, folderAlt);
 			meanEntry.setName(algorithm);
 			meanEntryAlt.setName(algorithm);
@@ -122,9 +147,12 @@ public class ExperimentAnalyzer {
 		}
 
 		String title = String.format("Average QoE%n%sMbps Total Link Capacity - %d clients", mbps, clients);
+		String titleFair = String.format("Average Fairness%n%sMbps Total Link Capacity - %d clients", mbps, clients);
 
 		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, QOE, 10);
+		BarGraph graph2 = barChartCreator("Fair", entries, entriesAlt, titleFair, SEGMENT_X_AXIS, FAIRNESS, 10);
 		saveChartS(folder+folderAlt, graph);
+		saveChartS(folder+folderAlt, graph2);
 	}
 
 	private LineGraph lineChartCreator(String chartType, List<Entry> entries, String title, String xAxis, String yAxis, int limit, int tick, int... clients) {
@@ -183,7 +211,7 @@ public class ExperimentAnalyzer {
 		int convergenceTime = 0;
 		for (Double qoe : entry.getQoeMetrics()) {
 			if (qoe < prevQoE) {
-				tempQoE += qoe - (prevQoE - qoe) * 2;
+				tempQoE += qoe - (prevQoE - qoe) * 5;
 			} else {
 				tempQoE += qoe;
 			}
@@ -197,11 +225,23 @@ public class ExperimentAnalyzer {
 
 		int segments = entry.getQoeMetrics().size();
 
-		double negativeQoE = (Math.max(entry.getNumberOfShortInterruptions() - 1, 0)) * 0.05 + entry.getNumberOfLongInterruptions() * 0.2; // One small interruption gets ignored usually
-		negativeQoE = negativeQoE > 1 ? 1 : negativeQoE;
+		double negativeQoE = (Math.max(entry.getNumberOfShortInterruptions() - 1, 0)) * 0.05 + entry.getNumberOfLongInterruptions() * 0.2; //One small interruption gets ignored usually
+		negativeQoE = negativeQoE > 2 ? 2 : negativeQoE;
 
 		double finalQoE = 0.7 * (tempQoE/segments) + 0.15 * (1 - (double)convergenceTime/segments) + 0.15 * (1 - negativeQoE);
 		entry.setAdjustedQoE(finalQoE);
+	}
+
+	private void getMeanFairness(List<Entry> entries) {
+		double totalHoss = 0;
+		for (int i = 0; i < entries.get(0).getPlayingBitrate().size(); i++) {
+			double[] entryQoE = new double[3];
+			for (int j = 0; j < entries.size(); j++) {
+				entryQoE[j] = entries.get(j).getQoeMetrics().get(i);
+			}
+			totalHoss += getHossIndex(entryQoE);
+		}
+
 	}
 
 	private double getHossIndex(double... qoe) {

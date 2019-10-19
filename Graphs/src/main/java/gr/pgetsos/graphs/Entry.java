@@ -16,6 +16,7 @@ public class Entry {
 	private int numberOfLongInterruptions;
 	private double meanQoE;
 	private double adjustedQoE;
+	private double meanFairness;
 
 	public List<Integer> getPlayingBitrate() {
 		return playingBitrate;
@@ -95,5 +96,13 @@ public class Entry {
 
 	public void setAdjustedQoE(double adjustedQoE) {
 		this.adjustedQoE = adjustedQoE;
+	}
+
+	public double getMeanFairness() {
+		return meanFairness;
+	}
+
+	public void setMeanFairness(double meanFairness) {
+		this.meanFairness = meanFairness;
 	}
 }

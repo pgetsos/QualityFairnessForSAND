@@ -20,7 +20,12 @@ public class ExperimentRunner {
 		analyzer.analyzeAdjustedQoE(FOLDER_HIGH, FOLDER_HIGH_ALT, 2, MODE_SYNC, MBPS_HIGH);
 		analyzer.analyzeAdjustedQoE(FOLDER_HIGH, FOLDER_HIGH_ALT, 3, MODE_SYNC, MBPS_HIGH);
 
-		if (0==0) return;
+		analyzer.analyzeSingleAdjusted(FOLDER_LOW, FOLDER_LOW_ALT, MBPS_LOW);
+		analyzer.analyzeSingleAdjusted(FOLDER_LOW, FOLDER_LOW_ALT, MBPS_LOW);
+		analyzer.analyzeSingleAdjusted(FOLDER_HIGH, FOLDER_HIGH_ALT, MBPS_HIGH);
+		analyzer.analyzeSingleAdjusted(FOLDER_HIGH, FOLDER_HIGH_ALT, MBPS_HIGH);
+
+//		if (0==0) return;
 		analyzer.analyzeSingle(FOLDER_LOW, LIMIT_ALT, MBPS_LOW);
 		analyzer.analyzeSingle(FOLDER_LOW_ALT, LIMIT_ALT, MBPS_LOW);
 		analyzer.analyzeSingle(FOLDER_HIGH, LIMIT_ALT, MBPS_HIGH);

@@ -1,5 +1,7 @@
 package gr.pgetsos.graphs.Helpers;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import java.util.Map;
 
 public class Helpers {
@@ -17,5 +19,18 @@ public class Helpers {
 					Map.entry(1244778, 0.963), Map.entry(1546902, 0.969), Map.entry(2133691, 0.959), Map.entry(2484135, 0.964),
 					Map.entry(3078587, 0.970), Map.entry(3526922, 0.973), Map.entry(3840360, 0.975), Map.entry(4219897, 0.978));
 		}
+	}
+
+	public static double getHossIndex(double... qoe) {
+		DescriptiveStatistics data = new DescriptiveStatistics();
+		for (double v : qoe) {
+			data.addValue(v);
+		}
+		//double std = data.getStandardDeviation(); // This is for sample std - wrong results
+		double std = Math.sqrt(data.getPopulationVariance());
+		double h = 0.978;
+		double l = 0.742;
+
+		return 0.5 * (1 - ((2*std)/(h-l))) + 0.5 * (data.getSum()/(h*data.getN()));
 	}
 }

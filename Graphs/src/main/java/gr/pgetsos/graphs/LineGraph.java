@@ -6,12 +6,18 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.GradientBarPainter;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +60,7 @@ public class LineGraph extends JFrame implements GraphImpl {
 				yAxisLabel,
 				dataset);
 
-		XYPlot plot = (XYPlot) chart.getPlot();
-		//plot.setBackgroundPaint(new Color(255,228,196));
-		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-		renderer.setDefaultShapesVisible(true);
+		XYPlot plot = chartProperties();
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		xAxis.setRange(0, limit);
 		xAxis.setTickUnit(new NumberTickUnit(tick));
@@ -73,10 +76,7 @@ public class LineGraph extends JFrame implements GraphImpl {
 				yAxisLabel,
 				dataset);
 
-		XYPlot plot = (XYPlot) chart.getPlot();
-		//plot.setBackgroundPaint(new Color(255,228,196));
-		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-		renderer.setDefaultShapesVisible(true);
+		XYPlot plot = chartProperties();
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		xAxis.setRange(0, limit);
@@ -94,10 +94,7 @@ public class LineGraph extends JFrame implements GraphImpl {
 				yAxisLabel,
 				dataset);
 
-		XYPlot plot = (XYPlot) chart.getPlot();
-		//plot.setBackgroundPaint(new Color(255,228,196));
-		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
-		renderer.setDefaultShapesVisible(true);
+		XYPlot plot = chartProperties();
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 		xAxis.setRange(0, limit);
@@ -155,5 +152,27 @@ public class LineGraph extends JFrame implements GraphImpl {
 
 	public void setChart(JFreeChart chart) {
 		this.chart = chart;
+	}
+
+	private XYPlot chartProperties () {
+		XYPlot plot = (XYPlot) chart.getPlot();
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+		renderer.setDefaultShapesVisible(true);
+		plot.setBackgroundPaint(new Color(215,215,215));
+		plot.getRenderer().setSeriesPaint(0, Color.red);
+		plot.getRenderer().setSeriesPaint(1, Color.BLUE);
+		plot.getRenderer().setSeriesPaint(2, new Color(252,250,34));
+		plot.getRenderer().setSeriesPaint(3, Color.black);
+		plot.getRenderer().setSeriesPaint(4, Color.MAGENTA);
+
+		LegendTitle standardlegend =  ((JFreeChart) chart).getLegend();
+		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+		standardlegend.setItemFont(new Font("Arial", Font.PLAIN, 22));
+		xAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
+		yAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
+		xAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
+		yAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
+		return plot;
 	}
 }

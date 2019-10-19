@@ -30,7 +30,6 @@ public class LogReader {
 		AtomicInteger shortInterruptions = new AtomicInteger(0);
 		AtomicInteger longInterruptions = new AtomicInteger(0);
 
-
 		try {
 			Path path = Paths.get(this.getClass().getClassLoader().getResource(folder + "/" + file).toURI());
 			try (Stream<String> lines = Files.lines(path)) {
