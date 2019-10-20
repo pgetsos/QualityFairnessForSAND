@@ -18,6 +18,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Map;
 
@@ -158,21 +159,22 @@ public class LineGraph extends JFrame implements GraphImpl {
 		XYPlot plot = (XYPlot) chart.getPlot();
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
 		renderer.setDefaultShapesVisible(true);
-		plot.setBackgroundPaint(new Color(215,215,215));
+//		plot.setBackgroundPaint(new Color(255,255,255));
 		plot.getRenderer().setSeriesPaint(0, Color.red);
 		plot.getRenderer().setSeriesPaint(1, Color.BLUE);
-		plot.getRenderer().setSeriesPaint(2, new Color(252,250,34));
+		plot.getRenderer().setSeriesPaint(2, new Color(252,250,14));
 		plot.getRenderer().setSeriesPaint(3, Color.black);
 		plot.getRenderer().setSeriesPaint(4, Color.MAGENTA);
-
+		renderer.setLegendLine(new Line2D.Double(-10.0D, -0.0D, 10.0D, 0.0D));
 		LegendTitle standardlegend =  ((JFreeChart) chart).getLegend();
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-		standardlegend.setItemFont(new Font("Arial", Font.PLAIN, 22));
-		xAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
-		yAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
-		xAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
-		yAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
+		plot.getChart().getTitle().setFont(new Font("Arial", Font.PLAIN, 40));
+		standardlegend.setItemFont(new Font("Arial", Font.PLAIN, 32));
+		xAxis.setLabelFont(new Font("Arial", Font.PLAIN, 35));
+		yAxis.setLabelFont(new Font("Arial", Font.PLAIN, 35));
+		xAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 28));
+		yAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 25));
 		return plot;
 	}
 }

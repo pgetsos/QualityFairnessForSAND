@@ -11,7 +11,7 @@ public class ExperimentRunner {
 	private static final String MBPS_HIGH = "6";
 	private static final String MODE_SYNC = "sync";
 	private static final String MODE_ASYNC = "async";
-	private static final int LIMIT = 302;
+	private static final int LIMIT = 102;
 	private static final int LIMIT_ALT = 62;
 
 	public void runAll() {
@@ -26,9 +26,9 @@ public class ExperimentRunner {
 		analyzer.analyzeSingleAdjusted(FOLDER_HIGH, FOLDER_HIGH_ALT, MBPS_HIGH);
 
 //		if (0==0) return;
-		analyzer.analyzeSingle(FOLDER_LOW, LIMIT_ALT, MBPS_LOW);
+		analyzer.analyzeSingle(FOLDER_LOW, LIMIT, MBPS_LOW);
 		analyzer.analyzeSingle(FOLDER_LOW_ALT, LIMIT_ALT, MBPS_LOW);
-		analyzer.analyzeSingle(FOLDER_HIGH, LIMIT_ALT, MBPS_HIGH);
+		analyzer.analyzeSingle(FOLDER_HIGH, LIMIT, MBPS_HIGH);
 		analyzer.analyzeSingle(FOLDER_HIGH_ALT, LIMIT_ALT, MBPS_HIGH);
 
 		runAllMultiple(FOLDER_LOW, MBPS_LOW, MODE_SYNC, LIMIT);

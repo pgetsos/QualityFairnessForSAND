@@ -35,7 +35,7 @@ public class ExperimentAnalyzer {
 
 	void analyzeSingle(String folder, int limit, String mbps) {
 		List<Entry> entries = getSingleEntries(folder);
-		String segmentTitle = String.format("Bandwidth per segment - %sMbps Total Link Capacity - 1 client", mbps);
+		String segmentTitle = String.format("Bitrate per segment - %sMbps Total Link Capacity - 1 client", mbps);
 		String bufferTitle = String.format("Buffer per segment - %sMbps Total Link Capacity - 1 client", mbps);
 		String qoeTitle = String.format("QoE per segment - %sMbps Total Link Capacity - 1 client", mbps);
 
@@ -64,7 +64,7 @@ public class ExperimentAnalyzer {
 
 		String title = String.format("Average QoE%n%sMbps Total Link Capacity - 1 client", mbps);
 
-		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, QOE, 10);
+		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, "Adjusted QoE", 10);
 
 		saveChartS(folder, graph);
 	}
@@ -149,7 +149,7 @@ public class ExperimentAnalyzer {
 		String title = String.format("Average QoE%n%sMbps Total Link Capacity - %d clients", mbps, clients);
 		String titleFair = String.format("Average Fairness%n%sMbps Total Link Capacity - %d clients", mbps, clients);
 
-		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, QOE, 10);
+		BarGraph graph = barChartCreator(QOE, entries, entriesAlt, title, ADJUSTED_X_AXIS, "Adjusted QoE", 10);
 		BarGraph graph2 = barChartCreator("Fair", entries, entriesAlt, titleFair, SEGMENT_X_AXIS, FAIRNESS, 10);
 		saveChartS(folder+folderAlt, graph);
 		saveChartS(folder+folderAlt, graph2);
@@ -184,7 +184,7 @@ public class ExperimentAnalyzer {
 		try {
 			File chartFolder = new File(resourceDirectory.getAbsoluteFile() + "\\" + folder + "_charts");
 			chartFolder.mkdirs();
-			File chart1 = new File(chartFolder.getAbsolutePath() + "\\" + removeLineFeeds(graph.getTitle()) + ".png");
+			File chart1 = new File(chartFolder.getAbsolutePath() + "\\" + removeLineFeeds(graph.getTitle()).replaceAll("\\.", "").replaceAll(" ", "-") + ".png");
 			System.out.println(chart1.getAbsolutePath());
 
 			ChartUtils.saveChartAsPNG(chart1, graph.getChart(), 1920, 1080 );
@@ -230,18 +230,6 @@ public class ExperimentAnalyzer {
 
 		double finalQoE = 0.7 * (tempQoE/segments) + 0.15 * (1 - (double)convergenceTime/segments) + 0.15 * (1 - negativeQoE);
 		entry.setAdjustedQoE(finalQoE);
-	}
-
-	private void getMeanFairness(List<Entry> entries) {
-		double totalHoss = 0;
-		for (int i = 0; i < entries.get(0).getPlayingBitrate().size(); i++) {
-			double[] entryQoE = new double[3];
-			for (int j = 0; j < entries.size(); j++) {
-				entryQoE[j] = entries.get(j).getQoeMetrics().get(i);
-			}
-			totalHoss += getHossIndex(entryQoE);
-		}
-
 	}
 
 	private double getHossIndex(double... qoe) {

@@ -11,6 +11,7 @@ import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.BarPainter;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.GradientBarPainter;
@@ -60,7 +61,7 @@ public class BarGraph extends JFrame implements GraphImpl {
 		CategoryDataset dataset = createDatasetQoE();
 		chart = ChartFactory.createBarChart(
 				title,
-				xAxisLabel,
+				"",
 				yAxisLabel,
 				dataset);
 
@@ -89,12 +90,12 @@ public class BarGraph extends JFrame implements GraphImpl {
 	private CategoryDataset createDatasetQoE() {
 		DefaultCategoryDataset   dataset = new DefaultCategoryDataset();
 		for (Entry entry : entries) {
-			dataset.addValue(entry.getMeanQoE(), entry.getName(), "2s segments - Video-based QoE");
-			dataset.addValue(entry.getAdjustedQoE(), entry.getName(), "2s segments - Adjusted QoE");
+			dataset.addValue(entry.getMeanQoE(), entry.getName(), "2s segments\nVideo-based QoE");
+			dataset.addValue(entry.getAdjustedQoE(), entry.getName(), "2s segments\nAdjusted QoE");
 		}
 		for (Entry entry : entriesAlt) {
-			dataset.addValue(entry.getMeanQoE(), entry.getName(), "10s segments - Video-based QoE");
-			dataset.addValue(entry.getAdjustedQoE(), entry.getName(), "10s segments - Adjusted QoE");
+			dataset.addValue(entry.getMeanQoE(), entry.getName(), "10s segments\nVideo-based QoE");
+			dataset.addValue(entry.getAdjustedQoE(), entry.getName(), "10s segments\nAdjusted QoE");
 		}
 		return dataset;
 	}
@@ -123,15 +124,24 @@ public class BarGraph extends JFrame implements GraphImpl {
 //		((BarRenderer) plot.getRenderer()).setBarPainter(new StandardBarPainter());
 		BarRenderer.setDefaultBarPainter(new StandardBarPainter());
 		((BarRenderer) plot.getRenderer()).setBarPainter(new GradientBarPainter());
-		plot.setBackgroundPaint(new Color(215,215,228));
+//		plot.setBackgroundPaint(new Color(205,205,218));
+		plot.getRenderer().setSeriesPaint(0, Color.red);
+		plot.getRenderer().setSeriesPaint(1, Color.BLUE);
+		plot.getRenderer().setSeriesPaint(2, new Color(252,250,14));
+		plot.getRenderer().setSeriesPaint(3, Color.black);
+		plot.getRenderer().setSeriesPaint(4, Color.MAGENTA);
+
 		LegendTitle standardlegend =  ((JFreeChart) chart).getLegend();
 		CategoryAxis xAxis = (CategoryAxis) plot.getDomainAxis();
 		ValueAxis yAxis = (ValueAxis) plot.getRangeAxis();
-		standardlegend.setItemFont(new Font("Arial", Font.PLAIN, 22));
-		xAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
-		yAxis.setLabelFont(new Font("Arial", Font.PLAIN, 25));
-		xAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
-		yAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 18));
+		xAxis.setMaximumCategoryLabelLines(2);
+		plot.getChart().getTitle().setFont(new Font("Arial", Font.PLAIN, 40));
+		((AbstractRenderer)plot.getRenderer()).setDefaultLegendShape(new Rectangle(20,20));
+		standardlegend.setItemFont(new Font("Arial", Font.PLAIN, 32));
+		xAxis.setLabelFont(new Font("Arial", Font.PLAIN, 35));
+		yAxis.setLabelFont(new Font("Arial", Font.PLAIN, 35));
+		xAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 28));
+		yAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 25));
 		return plot;
 	}
 }
