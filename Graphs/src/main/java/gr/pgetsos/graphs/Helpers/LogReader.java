@@ -81,7 +81,7 @@ public class LogReader {
 	}
 
 	private int parseTime(String time) {
-		LocalTime localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss"));
+		LocalTime localTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss,SSS"));
 		int hour = localTime.get(ChronoField.CLOCK_HOUR_OF_DAY);
 		int minute = localTime.get(ChronoField.MINUTE_OF_HOUR);
 		int second = localTime.get(ChronoField.SECOND_OF_MINUTE);
