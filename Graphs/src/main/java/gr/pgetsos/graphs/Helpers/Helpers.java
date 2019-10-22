@@ -1,7 +1,9 @@
 package gr.pgetsos.graphs.Helpers;
 
+import gr.pgetsos.graphs.Entry;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import java.util.List;
 import java.util.Map;
 
 public class Helpers {
@@ -32,5 +34,20 @@ public class Helpers {
 		double l = 0.742;
 
 		return 0.5 * (1 - ((2*std)/(h-l))) + 0.5 * (data.getSum()/(h*data.getN()));
+	}
+
+	public static String getAlgorithmName(String algorithm) {
+		Map<String, String> names = Map.of("basic", "Throughput Based", "netflix", "Buffer Based", "sara", "SARA", "sandbanddiv", "Bandwidth Division", "sandqoe", "QoE Fairness");
+		return names.get(algorithm);
+	}
+
+	public static int getLastStartTime(List<Entry> entries) {
+		int startTime = 0;
+		for (Entry entry : entries) {
+			if (entry.getBitratePerRealSec().firstKey() > startTime) {
+				startTime = entry.getBitratePerRealSec().firstKey();
+			}
+		}
+		return startTime;
 	}
 }

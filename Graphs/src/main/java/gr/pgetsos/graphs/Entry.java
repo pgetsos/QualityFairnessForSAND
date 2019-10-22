@@ -1,9 +1,6 @@
 package gr.pgetsos.graphs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Entry {
 	private String name;
@@ -11,6 +8,7 @@ public class Entry {
 	private List<Integer> bufferState = new ArrayList<>();
 	private List<Double> qoeMetrics = new ArrayList<>();
 	private Map<Integer, Integer> bufferPerSecond = new HashMap<>();
+	private TreeMap<Integer, Integer> bitratePerRealSec = new TreeMap<>();
 	private int numberOfInterruptions;
 	private int numberOfShortInterruptions;
 	private int numberOfLongInterruptions;
@@ -104,5 +102,13 @@ public class Entry {
 
 	public void setMeanFairness(double meanFairness) {
 		this.meanFairness = meanFairness;
+	}
+
+	public TreeMap<Integer, Integer> getBitratePerRealSec() {
+		return bitratePerRealSec;
+	}
+
+	public void setBitratePerRealSec(TreeMap<Integer, Integer> bitratePerRealSec) {
+		this.bitratePerRealSec = bitratePerRealSec;
 	}
 }

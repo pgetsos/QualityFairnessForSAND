@@ -1,6 +1,7 @@
 package gr.pgetsos.graphs;
 
 import gr.pgetsos.graphs.Helpers.GraphImpl;
+import gr.pgetsos.graphs.Helpers.Helpers;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -53,6 +54,15 @@ public class LineGraph extends JFrame implements GraphImpl {
 		}
 	}
 
+
+	public void chartForAsync(String mode, String xAxisLabel, String yAxisLabel, int limit, int tick, int segmentOffset, int clients){
+		switch (mode) {
+			case "Segments":
+				chartForSegmentsAsync(xAxisLabel, yAxisLabel, limit, tick, clients, segmentOffset);
+				break;
+		}
+	}
+
 	public void chartForSegments(String xAxisLabel, String yAxisLabel, int limit, int tick) {
 		XYDataset  dataset = createDatasetBitrates(entries);
 		chart = ChartFactory.createXYLineChart(
@@ -64,6 +74,23 @@ public class LineGraph extends JFrame implements GraphImpl {
 		XYPlot plot = chartProperties();
 		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
 		xAxis.setRange(0, limit);
+		xAxis.setTickUnit(new NumberTickUnit(tick));
+		ChartPanel panel = new ChartPanel(chart);
+		setContentPane(panel);
+	}
+
+	public void chartForSegmentsAsync(String xAxisLabel, String yAxisLabel, int limit, int tick, int clients, int segmentOffset) {
+		XYDataset  dataset = createDatasetBitratesAsync(entries, segmentOffset);
+		chart = ChartFactory.createXYLineChart(
+				title,
+				xAxisLabel,
+				yAxisLabel,
+				dataset);
+
+		XYPlot plot = chartProperties();
+		NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+		xAxis.setRange(0, limit);
+//		xAxis.setRange((clients-1) * segmentOffset - 1, (clients-1) * segmentOffset + limit);
 		xAxis.setTickUnit(new NumberTickUnit(tick));
 		ChartPanel panel = new ChartPanel(chart);
 		setContentPane(panel);
@@ -112,6 +139,26 @@ public class LineGraph extends JFrame implements GraphImpl {
 			int counter = 1;
 			for (Integer integer : entry.getPlayingBitrate()) {
 				Number t1 = integer/1000;
+				int t2 = counter++;
+				series.add(t2, t1);
+			}
+			dataset.addSeries(series);
+		}
+		return dataset;
+	}
+	
+	private XYDataset createDatasetBitratesAsync(List<Entry> entries, int segmentOffset) {
+		XYSeriesCollection   dataset = new XYSeriesCollection();
+		int entryCounter = 0;
+		int lastStartTime = Helpers.getLastStartTime(entries);
+		for (Entry entry : entries) {
+			XYSeries series = new XYSeries(entry.getName());
+			int counter = 1;
+			for (Map.Entry<Integer, Integer> pair : entry.getBitratePerRealSec().entrySet()) {
+				if (pair.getKey() < lastStartTime) {
+					continue;
+				}
+				Number t1 = pair.getValue()/1000;
 				int t2 = counter++;
 				series.add(t2, t1);
 			}
